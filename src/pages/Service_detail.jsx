@@ -1,5 +1,6 @@
 import '../index.css'
 import { useParams } from "react-router";
+import Header from '../components/Header'
 
 function Service_detail() {
   const params = useParams();
@@ -7,8 +8,9 @@ function Service_detail() {
 
   return (
     <>
-        <h1>Annonce</h1>
-        <p>{serviceId}</p>
+      <Header />
+      <h1>Annonce</h1>
+      <p>{serviceId}</p>
     </>
   )
 }
