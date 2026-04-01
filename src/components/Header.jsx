@@ -10,6 +10,7 @@ function Header() {
 
       {isMobile ? (
         <div className="mobile-controls">
+          <img src="/favicon.svg" alt="Voisins Connectés" className="header-logo" />
           <button
             aria-label="Toggle menu"
             className="burger"
@@ -27,9 +28,12 @@ function Header() {
         </div>
       ) : (
         <nav className="desktop-nav">
-          <a href="/">Home</a>
-          <a href="/services">Services</a>
-          <a href="/profile">Profile</a>
+          <img src="/favicon.svg" alt="Voisins Connectés" className="header-logo" />
+          <div style={{ display: "flex", gap: "2rem" }}>
+            <a href="/">Home</a>
+            <a href="/services">Services</a>
+            <a href="/profile">Profile</a>
+          </div>
         </nav>
       )}
     </header>

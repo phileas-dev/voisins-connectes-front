@@ -13,8 +13,8 @@ function Home() {
         <p className="description">Échangez avec 1500+ résidents</p>
         
         <div className="button-group">
-          <button className="btn btn-primary">S'inscrire</button>
-          <button className="btn btn-secondary">Se connecter</button>
+          <a href="/signup" className="btn btn-primary">S'inscrire</a>
+          <a href="/login" className="btn btn-secondary">Se connecter</a>
         </div>
 
         <div className="annonce">
