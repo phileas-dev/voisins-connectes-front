@@ -1,5 +1,3 @@
-import React from "react";
-
 function Field({
     name,
     type = "text",
