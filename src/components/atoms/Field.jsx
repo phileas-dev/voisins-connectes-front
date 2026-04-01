@@ -5,6 +5,7 @@ function Field({
     type = "text",
     placeholder = "",
     required = false,
+    accept = "",
     value = "",
     onChange = () => {},
     label,
@@ -24,6 +25,7 @@ function Field({
             type={type}
             placeholder={placeholder}
             required={required}
+            accept={accept}
             value={value}
             onChange={(e) => onChange(e.target.value)}
             className="field-input"
