@@ -1,6 +1,7 @@
 import '../index.css'
 import { useParams, useNavigate } from "react-router"
 import Header from '../components/Header'
+import Footer from '../components/Footer'
 import { useState, useEffect } from 'react'
 import {
   getService,
@@ -27,6 +28,7 @@ function Service_detail() {
   const [acceptingProposalId, setAcceptingProposalId] = useState(null)
   const [rejectingProposalId, setRejectingProposalId] = useState(null)
   const [statusUpdating, setStatusUpdating] = useState(false)
+  const [infoMessage, setInfoMessage] = useState(null)
   const isServiceOpen = service?.status === 'PENDING'
   const isOwner = isAuthenticated && user && service?.author?.id === user?.id
   const statusLabelMap = {
@@ -61,7 +63,7 @@ function Service_detail() {
     e.preventDefault()
     
     if (!isAuthenticated) {
-      alert('Vous devez être connecté pour proposer vos services')
+      setInfoMessage('Vous devez être connecté pour proposer vos services.')
       navigate('/login')
       return
     }
@@ -71,9 +73,10 @@ function Service_detail() {
 
     try {
       await createProposal(serviceId, { message: proposalText })
-      alert('Votre proposition a été envoyée avec succès !')
+      setInfoMessage('Votre proposition a été envoyée avec succès.')
       setProposalText('')
       setShowProposalForm(false)
+      await fetchService()
     } catch (err) {
       setError(err.message || 'Erreur lors de l\'envoi de la proposition')
     } finally {
@@ -142,6 +145,7 @@ function Service_detail() {
             <p style={{ textAlign: 'center', padding: '20px' }}>Chargement...</p>
           </div>
         </main>
+        <Footer />
       </>
     )
   }
@@ -183,6 +187,19 @@ function Service_detail() {
     <>
       <Header />
       <main style={{ padding: '20px', maxWidth: '800px', margin: '0 auto' }}>
+        {infoMessage && (
+          <div style={{
+            marginBottom: '16px',
+            padding: '12px',
+            backgroundColor: '#e8f8ef',
+            border: '1px solid #b7ebc6',
+            borderRadius: '8px',
+            color: '#1e7e34'
+          }}>
+            {infoMessage}
+          </div>
+        )}
+
         <button 
           onClick={() => navigate('/services')}
           style={{ 
@@ -431,9 +448,8 @@ function Service_detail() {
                     return
                   }
                   if (!isAuthenticated) {
-                    if (confirm('Vous devez être connecté pour répondre à cette annonce. Se connecter maintenant ?')) {
-                      navigate('/login')
-                    }
+                    setInfoMessage('Vous devez être connecté pour répondre à cette annonce.')
+                    navigate('/login')
                   } else {
                     setShowProposalForm(true)
                   }
@@ -495,6 +511,7 @@ function Service_detail() {
           </div>
         )}
       </main>
+      <Footer />
     </>
   )
 }

@@ -15,6 +15,7 @@ function Field({
     const [showPassword, setShowPassword] = useState(false);
 
     const displayType = showPasswordToggle && showPassword ? 'text' : type;
+    const isFile = type === 'file';
 
     return (
     <div className="form-field">
@@ -32,8 +33,8 @@ function Field({
                 placeholder={placeholder}
                 required={required}
                 accept={accept}
-                value={value}
-                onChange={(e) => onChange(e.target.value)}
+                value={isFile ? undefined : value}
+                onChange={(e) => onChange(isFile ? (e.target.files?.[0] || null) : e.target.value)}
                 className="field-input"
             />
             {showPasswordToggle && type === 'password' && (

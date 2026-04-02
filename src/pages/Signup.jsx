@@ -1,6 +1,7 @@
 import '../index.css'
 import Form from '../components/Form.jsx'
 import Header from '../components/Header'
+import Footer from '../components/Footer'
 import { useState } from 'react'
 import { useNavigate } from 'react-router'
 import { register } from '../services/api'
@@ -16,9 +17,8 @@ function Signup() {
         { name: 'email', type: 'email', placeholder: 'email@example.com', required: true, label: 'E-Mail' },
         { name: 'phone_number', type:'tel', placeholder: '+33 # ## ## ## ##', required: true, label: "Mobile" },
         { name: 'password', type: 'password', placeholder: '••••••••••••', required: true, label: 'Mot de passe' },
-        { name: 'confirm_password', type: 'password', placeholder: '••••••••••••', required: true, label: 'Confirmer le mot de passe' }
-        // Photo de profil temporairement désactivée - sera gérée plus tard
-        // { name: 'profile_picture', type: 'file', accept: 'image/*', required: true, label: 'Photo de profil' }
+        { name: 'confirm_password', type: 'password', placeholder: '••••••••••••', required: true, label: 'Confirmer le mot de passe' },
+        { name: 'profile_picture', type: 'file', accept: 'image/*', required: true, label: 'Photo de profil' }
     ];
 
     const handleSubmit = async (values) => {
@@ -28,12 +28,16 @@ function Signup() {
             setError('Les mots de passe ne correspondent pas');
             return;
         }
+
+        if (!(values.profile_picture instanceof File)) {
+            setError('La photo de profil est obligatoire');
+            return;
+        }
         
         setLoading(true);
         
         try {
             await register(values);
-            alert('Inscription réussie ! Vous pouvez maintenant vous connecter.');
             navigate('/login');
         } catch (err) {
             setError(err.message || 'Erreur lors de l\'inscription');
@@ -76,6 +80,7 @@ function Signup() {
                     </div>
                 </div>
             </main>
+            <Footer />
         </>
     )
 }

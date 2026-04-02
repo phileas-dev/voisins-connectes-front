@@ -1,6 +1,7 @@
 import '../index.css'
 import Form from '../components/Form.jsx'
 import Header from '../components/Header'
+import Footer from '../components/Footer'
 import { useState } from 'react'
 import { useNavigate } from 'react-router'
 import { useAuth } from '../contexts/AuthContext'
@@ -69,6 +70,7 @@ function Login() {
           </div>
         </div>
       </main>
+      <Footer />
     </>
   )
 }

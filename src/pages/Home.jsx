@@ -1,5 +1,6 @@
 import '../index.css'
 import Header from '../components/Header'
+import Footer from '../components/Footer'
 import { useAuth } from '../contexts/AuthContext'
 import { useNavigate } from 'react-router'
 import { useState, useEffect } from 'react'
@@ -192,6 +193,7 @@ function Home() {
           )}
         </div>
       </main>
+      <Footer />
     </>
   )
 }

@@ -1,5 +1,6 @@
 import '../index.css'
 import Header from '../components/Header'
+import Footer from '../components/Footer'
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router'
 import { createService, getCategories } from '../services/api'
@@ -173,6 +174,7 @@ function CreateService() {
           </div>
         </form>
       </main>
+      <Footer />
     </>
   )
 }

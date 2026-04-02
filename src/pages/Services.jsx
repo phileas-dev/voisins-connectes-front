@@ -1,5 +1,6 @@
 import '../index.css'
 import Header from '../components/Header'
+import Footer from '../components/Footer'
 import { useState, useEffect } from 'react'
 import { getServices, getCategories } from '../services/api'
 import { useNavigate } from 'react-router'
@@ -232,6 +233,7 @@ function Services() {
           </div>
         )}
       </main>
+      <Footer />
     </>
   )
 }

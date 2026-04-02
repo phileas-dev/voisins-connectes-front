@@ -1,19 +1,24 @@
 const API_URL = import.meta.env.VITE_API_URL;
 
 export const apiFetch = async (endpoint, options = {}) => {
+    const { auth = true, ...fetchOptions } = options;
     const token = localStorage.getItem('jwt_token');
+    const isFormData = fetchOptions.body instanceof FormData;
 
     const headers = {
-        'Content-Type': 'application/json',
-        ...options.headers,
+        ...fetchOptions.headers,
     };
 
-    if (token) {
+    if (!isFormData && !headers['Content-Type']) {
+        headers['Content-Type'] = 'application/json';
+    }
+
+    if (auth && token) {
         headers['Authorization'] = `Bearer ${token}`;
     }
 
     const response = await fetch(`${API_URL}${endpoint}`, {
-        ...options,
+        ...fetchOptions,
         headers,
     });
 
@@ -51,16 +56,25 @@ export const login = async (email, password) => {
 };
 
 export const register = async (userData) => {
-    // Pour l'instant, on retire la photo de profil car le backend attend du JSON
-    // On utilisera la photo par défaut du backend
     const { profile_picture, confirm_password, ...dataToSend } = userData;
-    
-    const data = await apiFetch('/register', {
+
+    if (profile_picture instanceof File) {
+        const formData = new FormData();
+        Object.entries(dataToSend).forEach(([key, value]) => {
+            formData.append(key, value ?? '');
+        });
+        formData.append('avatar', profile_picture);
+
+        return apiFetch('/register', {
+            method: 'POST',
+            body: formData,
+        });
+    }
+
+    return apiFetch('/register', {
         method: 'POST',
         body: JSON.stringify(dataToSend),
     });
-    
-    return data;
 };
 
 export const logout = () => {
@@ -75,6 +89,23 @@ export const getCurrentUser = async () => {
     return apiFetch('/users/me');
 };
 
+export const updateCurrentUser = async (userData) => {
+    return apiFetch('/users/me', {
+        method: 'PUT',
+        body: JSON.stringify(userData),
+    });
+};
+
+export const uploadCurrentUserAvatar = async (file) => {
+    const formData = new FormData();
+    formData.append('avatar', file);
+
+    return apiFetch('/users/me/avatar', {
+        method: 'POST',
+        body: formData,
+    });
+};
+
 // Services functions
 export const getServices = async ({ categoryId = null, status = null } = {}) => {
     const params = new URLSearchParams();
@@ -82,11 +113,11 @@ export const getServices = async ({ categoryId = null, status = null } = {}) => 
     if (status) params.set('status', status);
     const query = params.toString();
     const endpoint = query ? `/services?${query}` : '/services';
-    return apiFetch(endpoint);
+    return apiFetch(endpoint, { auth: false });
 };
 
 export const getService = async (id) => {
-    return apiFetch(`/services/${id}`);
+    return apiFetch(`/services/${id}`, { auth: false });
 };
 
 export const getMyServices = async () => {
@@ -94,7 +125,7 @@ export const getMyServices = async () => {
 };
 
 export const getCategories = async () => {
-    return apiFetch('/categories');
+    return apiFetch('/categories', { auth: false });
 };
 
 export const deleteService = async (id) => {

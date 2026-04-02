@@ -1,5 +1,6 @@
 import '../index.css'
 import Header from '../components/Header'
+import Footer from '../components/Footer'
 import { useState, useEffect } from 'react'
 import { getMyServices, deleteService } from '../services/api'
 import { useNavigate } from 'react-router'
@@ -12,6 +13,8 @@ function MyServices() {
   const [services, setServices] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [successMessage, setSuccessMessage] = useState(null)
+  const [pendingDeleteService, setPendingDeleteService] = useState(null)
 
   useEffect(() => {
     fetchMyServices()
@@ -29,17 +32,14 @@ function MyServices() {
     }
   }
 
-  const handleDelete = async (id, title) => {
-    if (!confirm(`Êtes-vous sûr de vouloir supprimer l'annonce "${title}" ?`)) {
-      return
-    }
-
+  const handleDelete = async (id) => {
     try {
       await deleteService(id)
       setServices(services.filter(s => s.id !== id))
-      alert('Annonce supprimée avec succès !')
+      setSuccessMessage('Annonce supprimée avec succès.')
+      setPendingDeleteService(null)
     } catch (err) {
-      alert(err.message || 'Erreur lors de la suppression')
+      setError(err.message || 'Erreur lors de la suppression')
     }
   }
 
@@ -168,7 +168,10 @@ function MyServices() {
             Voir
           </button>
           <button
-            onClick={() => handleDelete(service.id, service.title)}
+            onClick={() => {
+              setSuccessMessage(null)
+              setPendingDeleteService({ id: service.id, title: service.title })
+            }}
             style={{
               padding: '8px 12px',
               fontSize: '13px',
@@ -259,6 +262,7 @@ function MyServices() {
         <main style={{ padding: '20px', textAlign: 'center' }}>
           <p>Chargement de vos annonces...</p>
         </main>
+        <Footer />
       </>
     )
   }
@@ -278,6 +282,7 @@ function MyServices() {
             {error}
           </div>
         </main>
+        <Footer />
       </>
     )
   }
@@ -286,6 +291,55 @@ function MyServices() {
     <>
       <Header />
       <main style={{ padding: '20px', maxWidth: '1400px', margin: '0 auto' }}>
+        {successMessage && (
+          <div style={{
+            marginBottom: '16px',
+            padding: '12px',
+            backgroundColor: '#e8f8ef',
+            border: '1px solid #b7ebc6',
+            borderRadius: '8px',
+            color: '#1e7e34'
+          }}>
+            {successMessage}
+          </div>
+        )}
+
+        {pendingDeleteService && (
+          <div style={{
+            marginBottom: '16px',
+            padding: '12px',
+            backgroundColor: '#fff7ed',
+            border: '1px solid #fed7aa',
+            borderRadius: '8px',
+            color: '#9a3412',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            gap: '12px',
+            flexWrap: 'wrap'
+          }}>
+            <span>
+              Confirmer la suppression de l'annonce "{pendingDeleteService.title}" ?
+            </span>
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <button
+                className="btn btn-secondary"
+                onClick={() => setPendingDeleteService(null)}
+                style={{ padding: '8px 12px' }}
+              >
+                Annuler
+              </button>
+              <button
+                className="btn btn-primary"
+                onClick={() => handleDelete(pendingDeleteService.id)}
+                style={{ padding: '8px 12px' }}
+              >
+                Supprimer
+              </button>
+            </div>
+          </div>
+        )}
+
         <div style={{
           display: 'flex',
           flexDirection: isMobile ? 'column' : 'row',
@@ -373,6 +427,7 @@ function MyServices() {
           </div>
         )}
       </main>
+      <Footer />
     </>
   )
 }
